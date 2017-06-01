@@ -1,0 +1,12 @@
+extends layout
+
+block content
+    each location in partials.weather.locations
+        .location
+            h3= location.name
+            a(href= location.forecastUrl)
+                img(src= location.iconUrl alt=location.weather)
+                span #{location.weather} #{location.temp}
+
+    small Source:
+        a(href="http://asd") Weather Underground

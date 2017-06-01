@@ -1,3 +1,21 @@
-//
-   Created by wuxiaoran on 2017/6/1.
+extends layout
 
+block content
+    ul
+        -for (var i in tours)
+            li #{tours[i].name}-#{tours[i].price}
+                if currencies
+                   p #{currency.abbrev}
+    unless currencies
+        p all prices in #{currency.name}
+    if specialsUrl
+        span I'm in a new block...but the context hasn't changed (sortof)
+        p Check out our <a href="#{specialsUrl}" > specials!
+    else
+        p Please check back often for specials.
+
+    p
+        each curr in currencies
+            a(href="#" class="currency") #{curr}
+        else
+            p Unfortunately, we currently only accept #{currency.name}.

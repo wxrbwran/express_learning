@@ -30,7 +30,7 @@ router.get('/headers', function(req, res, next) {
   res.send(s);
 });
 
-router.get('/test_Pug', function(req, res, next) {
+router.get('/test', function(req, res, next) {
   const data = {
     currency: { name: 'United States dollars', abbrev: 'USD'},
     tours: [
@@ -43,12 +43,12 @@ router.get('/test_Pug', function(req, res, next) {
   res.render('test', {...data});
 });
 
-router.get('/weather', function(req, res, next) {
+router.get('/home', function(req, res, next) {
   if (!res.locals.partials) {
     res.locals.partials = {};
   }
   res.locals.partials.weather = getWeatherData();
-  res.render('weather');
+  res.render('home');
 });
 
 function getWeatherData(){

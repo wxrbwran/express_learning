@@ -2,8 +2,8 @@ extends layout
 
 block content
     ul
-        -for (var i in tours)
-            li #{tours[i].name}-#{tours[i].price}
+        each i in tours
+            li #{i.name}-#{i.price}
                 if currencies
                    p #{currency.abbrev}
     unless currencies

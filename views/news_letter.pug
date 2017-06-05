@@ -1,0 +1,14 @@
+h2 Sign up for our newsletter to receive news and specials!
+form.form-horizontal(role="form" action="/process?form=newsletter" method="POST")
+    input(type="hidden", name="_csrf", value=csrf )
+    .form-group
+        label.col-sm-2.control-label(for="name") Name
+        .col-sm-4
+            input#name.form-control(type="text", name="name")
+    .form-group
+        label.col-sm-2.control-label(for='email') Email
+        .col-sm-4
+            input#email.from-control(type="email", required, name="email")
+    .form-group
+        .col-sm-offset-2.col-sm-4
+            button.btn.btn-default(type="submit") Register

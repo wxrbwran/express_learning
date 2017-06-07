@@ -1,17 +1,20 @@
 import express from 'express';
 import path from 'path';
+import multer from 'multer';
 
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var sassMiddleware = require('node-sass-middleware');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const sassMiddleware = require('node-sass-middleware');
 
-var index = require('./routes/index');
-var users = require('./routes/users');
-var api = require('./routes/api');
+const upload = multer({ dest: 'uploads/' })
 
-var app = express();
+const index = require('./routes/index');
+const users = require('./routes/users');
+const api = require('./routes/api');
+
+const app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -37,9 +40,21 @@ app.use('/api', api);
 
 app.disable('x-powered-by');
 
+app.post('/process', function (req, res){
+  if(req.xhr) {
+    res.json({success: true})
+  } else {
+    console.log('Form (from querystring): ' + req.query.form);
+    console.log('CSRF token (from hidden form field): ' + req.body._csrf);
+    console.log('Name (from visible form field): ' + req.body.name);
+    console.log('Email (from visible form field): ' + req.body.email);
+    res.redirect(303, '/home');
+  }
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  // var err = new Error('Not Found');
+  // const err = new Error('Not Found');
   res.status(404);
   res.render('404');
   // next(err);

@@ -2,7 +2,8 @@ extends layout
 block content
     h2 Sign up for our newsletter to receive news and specials!
     .formContainer
-        form.form-horizontal(role="form" action="/process" method="POST")
+        form.form-horizontal(role="form"
+            enctype="multipart/form-data" action="/process" method="POST")
             input#csrf(type="hidden", name="_csrf", value=csrf )
             .form-group
                 label.col-sm-2.control-label(for="name") Name
@@ -13,8 +14,12 @@ block content
                 .col-sm-4
                     input#email.form-control(type="email", required, name="email")
             .form-group
+                label.col-sm-2.control-label(for='photo') File
+                .col-sm-4
+                    input#photo.form-control(type="file", accept="image/*", name="photo")
+            .form-group
                 .col-sm-offset-2.col-sm-4
-                    button.btn.btn-default(type="submit") Register
+                    button.btn.btn-default#submit(type="submit") Register
     p.msg
 block scripts
     script(src='js/newsletter.js')

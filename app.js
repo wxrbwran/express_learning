@@ -1,6 +1,6 @@
-import express from 'express';
-import path from 'path';
-import multer from 'multer';
+const express= require('express');
+const path= require('path');
+const multer = require('multer');
 
 const favicon = require('serve-favicon');
 const logger = require('morgan');
@@ -8,7 +8,18 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const sassMiddleware = require('node-sass-middleware');
 
-const upload = multer({ dest: 'uploads/' })
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    console.log(file);
+    const fileNameArray = file.originalname.split('.');
+    const ext = fileNameArray[fileNameArray.length -1];
+    cb(null, `${file.fieldname}-${Date.now()}.${ext}`);
+  }
+})
+const upload = multer({ storage });
 
 const index = require('./routes/index');
 const users = require('./routes/users');
@@ -40,8 +51,9 @@ app.use('/api', api);
 
 app.disable('x-powered-by');
 
-app.post('/process', function (req, res){
+app.post('/process', upload.single('photo'), function (req, res){
   if(req.xhr) {
+    console.log(req.file, req.body);
     res.json({success: true})
   } else {
     console.log('Form (from querystring): ' + req.query.form);

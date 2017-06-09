@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "NODE_ENV=development nodemon ./bin/www --exec babel-node",
+    "start": "NODE_ENV=development nodemon ./bin/www",
     "build": "NODE_ENV=production babel app.js -d dist --presets es2015,stage-2"
   },
   "dependencies": {

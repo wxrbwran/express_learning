@@ -1,15 +1,23 @@
 $(function () {
-  $('.form-horizontal').on('click',function (e) {
+  $('#submit').on('click',function (e) {
     e.preventDefault();
     const action = $(this).attr('action');
     const name = $('#name').val();
     const _csrf = $('#csrf').val();
     const email = $('#email').val();
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('_csrf', _csrf);
+    formData.append('email', email);
+    formData.append('photo', $('#photo')[0].files[0]);
     $.ajax({
       type: 'post',
-      url: action,
-      data: {name, email, _csrf}
+      url: '/process',
+      data: formData,
+      processData : false,
+      contentType : false,
     }).done(res => {
+      alert('success');
       console.log(res);
     }).fail(err => {
       console.log(err);

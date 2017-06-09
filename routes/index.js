@@ -40,7 +40,12 @@ router.get('/test', function(req, res, next) {
     specialsUrl: '/january-specials',
     currencies: [ 'USD', 'GBP', 'BTC' ],
   }
-  res.render('test', {...data});
+  res.render('test', {
+    currency: data.currency,
+    tours: data.tours,
+    specialsUrl: data.specialsUrl,
+    currencies: data.currencies,
+  });
 });
 
 router.get('/home', function(req, res, next) {

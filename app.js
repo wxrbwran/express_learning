@@ -8,7 +8,8 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const sassMiddleware = require('node-sass-middleware');
 
-const credentials = require('./credentials.js');
+const credentials = require('./config/credentials.js');
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');
@@ -53,6 +54,10 @@ app.use('/api', api);
 app.disable('x-powered-by');
 
 app.post('/process', upload.single('photo'), function (req, res){
+  const cookie = req.cookies.monster;
+  const signedCookie = req.signedCookies.signedMonster;
+  console.log(cookie, signedCookie);
+  req.clearCookie('monster');
   if(req.xhr) {
     console.log(req.file, req.body);
     res.json({success: true})

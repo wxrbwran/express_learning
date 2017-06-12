@@ -56,6 +56,8 @@ router.get('/home', function(req, res, next) {
   res.render('home');
 });
 router.get('/newsletter', function (req, res){
+  res.cookie('monster', 'mom mon');
+  res.cookie('signedMonster', 'mom mon11', {signed: true});
   // 我们会在后面学到 CSRF……目前，只提供一个虚拟值
   res.render('news_letter', { csrf: 'CSRF token goes here' });
 });

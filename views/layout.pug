@@ -6,6 +6,12 @@ html
     link(rel='stylesheet', href='/stylesheets/style.css')
     block style
   body
+    if flash
+      div.alert.alert-dismissible
+        button.close(data-dismiss="alert") &times
+        strong= flash.intro
+        .
+          != flash.message
     block content
     script(src='//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js')
     block scripts

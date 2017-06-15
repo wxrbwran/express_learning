@@ -5,7 +5,10 @@ var router = express.Router();
 router.get('/', function(req, res, next) {
   const { a, as1 } = req.query;
   console.log(a, as1);
-  res.render('index', { title: 'Express' });
+  res.render('index', {
+    title: 'Express',
+    userName: !!req.session ? req.session.userName : null,
+  });
 });
 router.get('/about', function(req, res, next) {
   res.render('about', {

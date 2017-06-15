@@ -38,6 +38,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser(credentials.cookieSecret));
+app.use(require('express-session')());
 app.use(sassMiddleware({
   src: path.join(__dirname, 'public'),
   dest: path.join(__dirname, 'public'),
@@ -46,6 +47,13 @@ app.use(sassMiddleware({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(
+  function (req, res, next){
+    // 如果有即显消息，把它传到上下文中，然后清除它
+    res.locals.flash = req.session.flash;
+    delete req.session.flash;
+    next();
+  });
 app.use('/', index);
 app.use('/users', users);
 app.use('/api', api);
@@ -56,10 +64,10 @@ app.disable('x-powered-by');
 app.post('/process', upload.single('photo'), function (req, res){
   const cookie = req.cookies.monster;
   const signedCookie = req.signedCookies.signedMonster;
-  console.log(cookie, signedCookie);
-  req.clearCookie('monster');
+  res.clearCookie('monster');
   if(req.xhr) {
     console.log(req.file, req.body);
+    req.session.userName = req.body.name;
     res.json({success: true})
   } else {
     console.log('Form (from querystring): ' + req.query.form);

@@ -1,6 +1,6 @@
 $(function () {
   $('#submit').on('click',function (e) {
-    e.preventDefault();
+    // e.preventDefault();
     const action = $(this).attr('action');
     const name = $('#name').val();
     const _csrf = $('#csrf').val();
@@ -17,7 +17,6 @@ $(function () {
       processData : false,
       contentType : false,
     }).done(res => {
-      alert('success');
       console.log(res);
     }).fail(err => {
       console.log(err);

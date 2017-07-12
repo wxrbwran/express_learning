@@ -7,8 +7,9 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const sassMiddleware = require('node-sass-middleware');
 const compression = require('compression');
+const session = require('express-session');
 const mongoose = require('mongoose');
-
+const MongoSessionStore = require('connect-mongo')(session);
 const credentials = require('./config/credentials.js');
 
 const index = require('./routes/index');
@@ -93,7 +94,18 @@ function shouldCompress (req, res) {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser(credentials.cookieSecret));
-app.use(require('express-session')());
+app.use(session({
+  secret: 'RE7ty87gyF^%RT&^UYgvc6Ut*gyV5&YUTR#%$%&^*IGFRDFCNH',
+  key: 'test', //db_config.module.database,//cookie name
+  cookie: {maxAge: 1000*60*60*24*7},//7 days
+  resave: false,
+  saveUninitialized: true,
+  store: new MongoSessionStore({
+    db: 'sessions',
+    url: 'mongodb://test:qingfei775@127.0.0.1/test',
+  })
+}));
+
 app.use(
   sassMiddleware({
     src: path.join(__dirname, 'public'),

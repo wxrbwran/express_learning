@@ -95,9 +95,10 @@ router.post('/process', upload.single('photo'), function(req, res) {
     console.log('Email (from visible form field): ' + req.body.email);
     req.session.flash = {
       type: 'danger',
-      intro: 'Validation error!',
-      message: 'The email address you entered was not valid.',
+      intro: 'Validation!',
+      message: 'The email address',
     };
+    req.session.userName = req.body.name;
     res.redirect(303, '/home');
   }
 });

@@ -33,7 +33,7 @@ router.get('/', function (req, res, next) {
     });
 });
 
-router.get('/set_Currency/:currency', function (req, res) {
+router.get('/set-currency/:currency', function (req, res) {
     req.session.currency = req.params.currency;
     return res.redirect(303, '/vacation');
 });

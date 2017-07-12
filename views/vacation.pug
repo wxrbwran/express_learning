@@ -1,17 +1,22 @@
 extends layout
 
 block content
-    h1 Vacations
-    each vacation in vacations
-        .vacation
-            h3=vacation.name
-            p=vacation.description
-                if vacation.inSeason
-                    span.price=vacation.price
-                    a.btn.btn-default(href='/cart/add?sku='+vacation.sku) Buy Now!
-                else
-                    span.outOfSeason We're sorry, not in season
-                    .
-                        'The "notify me when this vacation is in s page will be our next task.'
-                    a(href='vacation/notify-me?sku='+vacation.sku) notify me when in season
+  h1 Vacations
+  each vacation in vacations
+    .vacation
+      h3=vacation.name
+      p=vacation.description
+        if vacation.inSeason
+          span.price=vacation.price
+          a.btn.btn-default(href='/cart/add?sku='+vacation.sku) Buy Now!
+        else
+          span.outOfSeason We're sorry, not in season
+          .
+              'The "notify me when this vacation is in s page will be our next task.'
+          a(href='vacation/notify-me?sku='+vacation.sku) notify me when in season
 
+  hr
+  p Currency
+    a.currency(href='/vacation/set_Currency/USD') USD |
+    a.currency(href='/vacation/set_Currency/GBP') GBP |
+    a.currency(href='/vacation/set_Currency/BTC') BTC

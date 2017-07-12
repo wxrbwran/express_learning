@@ -6,14 +6,24 @@ const router = express.Router();
 const Vacation = require('../models/vacations');
 const VacationInSeasonListener = require('../models/vacationInSeasonListener');
 
+function convertFromUSD(value, currency){
+    switch (currency){
+        case 'USD': return value * 1;
+        case 'GBP': return value * 0.6;
+        case 'BTC': return value * 0.0023707918444761;
+        default: return NaN ;
+    }
+}
+
 router.get('/', function (req, res, next) {
     Vacation.find({available: true}, function (err, vacations) {
+        const currency = req.session.currency || 'USD';
         const context = vacations.map(vacation => {
             return {
                 sku: vacation.sku,
                 name: vacation.name,
                 description: vacation.description,
-                price: vacation.getDisplayPrice(),
+                price: convertFromUSD(vacation.getDisplayPrice(), currency),
                 inSeason: vacation.inSeason,
             }
         });
@@ -22,6 +32,12 @@ router.get('/', function (req, res, next) {
         });
     });
 });
+
+router.get('/set_Currency/:currency', function (req, res) {
+    req.session.currency = req.params.currency;
+    return res.redirect(303, '/vacation');
+});
+
 router.get('/notify-me', function (req, res, next) {
     res.render('notify-me', {
         sku: req.query.sku

@@ -11,7 +11,8 @@ html
         button.close(data-dismiss="alert") &times
         strong= flash.intro
         .
-          != flash.message
+          #{flash.message}
     block content
     script(src='//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js')
+    script(src='//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js')
     block scripts

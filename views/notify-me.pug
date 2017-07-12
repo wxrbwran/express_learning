@@ -1,0 +1,12 @@
+extends layout
+block content
+  .formContainer
+    form.form-horizontal.newsletter-form(method='post',action='/vacation/notify-me')
+      input(type='hidden', name='sku', value=sku)
+      .form-group
+        label.col-sm-2.control-label(for='email') Email
+        .col-sm-4
+          input.form-control#email(type='email', name='email')
+      .form-group
+        .col-sm-offset-2.col-sm-4
+          button.btn.btn-default(type='submit') Submit

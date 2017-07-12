@@ -1,6 +1,20 @@
 var express = require('express');
 var router = express.Router();
 
+const multer = require('multer');
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function(req, file, cb) {
+    console.log(file);
+    const fileNameArray = file.originalname.split('.');
+    const ext = fileNameArray[fileNameArray.length - 1];
+    cb(null, `${file.fieldname}-${Date.now()}.${ext}`);
+  },
+});
+const upload = multer({ storage });
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   const { a, as1 } = req.query;
@@ -65,6 +79,28 @@ router.get('/newsletter', function (req, res){
   res.render('news_letter', { csrf: 'CSRF token goes here' });
 });
 
+
+router.post('/process', upload.single('photo'), function(req, res) {
+  const cookie = req.cookies.monster;
+  const signedCookie = req.signedCookies.signedMonster;
+  res.clearCookie('monster');
+  if (req.xhr) {
+    console.log(req.file, req.body);
+    req.session.userName = req.body.name;
+    // res.json({ success: true });
+  } else {
+    console.log('Form (from querystring): ' + req.query.form);
+    console.log('CSRF token (from hidden form field): ' + req.body._csrf);
+    console.log('Name (from visible form field): ' + req.body.name);
+    console.log('Email (from visible form field): ' + req.body.email);
+    req.session.flash = {
+      type: 'danger',
+      intro: 'Validation error!',
+      message: 'The email address you entered was not valid.',
+    };
+    res.redirect(303, '/home');
+  }
+});
 
 function getWeatherData(){
   return {

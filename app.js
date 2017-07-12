@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const multer = require('multer');
 
 const favicon = require('serve-favicon');
 const logger = require('morgan');
@@ -8,45 +7,89 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const sassMiddleware = require('node-sass-middleware');
 const compression = require('compression');
-const credentials = require('./config/credentials.js');
+const mongoose = require('mongoose');
 
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename: function(req, file, cb) {
-    console.log(file);
-    const fileNameArray = file.originalname.split('.');
-    const ext = fileNameArray[fileNameArray.length - 1];
-    cb(null, `${file.fieldname}-${Date.now()}.${ext}`);
-  },
-});
-const upload = multer({ storage });
+const credentials = require('./config/credentials.js');
 
 const index = require('./routes/index');
 const users = require('./routes/users');
+const vacation = require('./routes/vacation');
+
 const api = require('./routes/api');
 
 const app = express();
+
+mongoose.connect('mongodb://test:qingfei775@127.0.0.1/test', {
+  useMongoClient: true,
+});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+/*
+* 每个请求都在一个域中处理是一种好的做法，
+* 这样你就可以追踪那个请求中所有的未捕获错误并做出相应的响应（正常地关闭服务器）。
+* 添加一个中间件就可以非常轻松地满足这 个要求。
+* 这个中间件应该在所有其他路由或中间件前面：
+* */
+app.use( function (req, res, next){
+  // 为这个请求创建一个域
+  var domain = require('domain').create();
+  // 处理这个域中的错误
+  domain.on('error', function (err) {
+    console.error('DOMAIN ERROR CAUGHT\n', err.stack);
+    try { // 在 5 秒内进行故障保护关机
+      setTimeout(function (){ console.error('Failsafe shutdown.');
+        process.exit(1); }, 5000);
+      // 从集群中断开
+      var worker = require('cluster').worker;
+      if (worker) worker.disconnect();
+      // 停止接收新请求
+      server.close();
+      try {
+        // 尝试使用 Express 错误路由
+        next(err);
+      } catch (err) {
+        // 如果 Express 错误路由失效，尝试返回普通文本响应
+        console.error('Express error mechanism failed.\n', err.stack);
+        res.statusCode = 500;
+        res.setHeader('content-type', 'text/plain');
+        res.end('Server error.');
+      }
+    } catch (err){
+      console.error('Unable to send 500 response.\n', err.stack);
+    }
+  });
+  // 向域中添加请求和响应对象
+  domain.add(req);
+  domain.add(res);
+  // 执行该域中剩余的请求链
+  domain.run(next);
+});
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+switch (app.get('env')) {
+  case 'production':
+    app.use(require('express-logger')({
+      path: __dirname+'/log/request.log',
+    }));
+    break;
+  case 'development':
+  default:
+    app.use(logger('dev'));
+    break;
+}
 
 app.use(compression({filter: shouldCompress}));
 
 function shouldCompress (req, res) {
   if (req.headers['x-no-compression']) {
-    // don't compress responses with this request header
     return false
   }
   // fallback to standard filter function
   return compression.filter(req, res)
 }
-
+// uncomment after placing your favicon in /public
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser(credentials.cookieSecret));
@@ -67,33 +110,19 @@ app.use(function(req, res, next) {
   delete req.session.flash;
   next();
 });
+
+// app.use( function (req,res,next){
+//   var cluster = require('cluster');
+//   if (cluster.isWorker)
+//     console.log('Worker %d received request', cluster.worker.id);
+// });
+
 app.use('/', index);
 app.use('/users', users);
+app.use('/vacation', vacation);
 app.use('/api', api);
 
 app.disable('x-powered-by');
-
-app.post('/process', upload.single('photo'), function(req, res) {
-  const cookie = req.cookies.monster;
-  const signedCookie = req.signedCookies.signedMonster;
-  res.clearCookie('monster');
-  if (req.xhr) {
-    console.log(req.file, req.body);
-    req.session.userName = req.body.name;
-    // res.json({ success: true });
-  } else {
-    console.log('Form (from querystring): ' + req.query.form);
-    console.log('CSRF token (from hidden form field): ' + req.body._csrf);
-    console.log('Name (from visible form field): ' + req.body.name);
-    console.log('Email (from visible form field): ' + req.body.email);
-    req.session.flash = {
-      type: 'danger',
-      intro: 'Validation error!',
-      message: 'The email address you entered was not valid.',
-    };
-    res.redirect(303, '/home');
-  }
-});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

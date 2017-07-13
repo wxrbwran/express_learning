@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
-
 const favicon = require('serve-favicon');
+const responseTime = require('response-time')
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
@@ -10,18 +10,26 @@ const compression = require('compression');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const MongoSessionStore = require('connect-mongo')(session);
-const credentials = require('./config/credentials.js');
 
+const credentials = require('./config/credentials.js');
 const index = require('./routes/index');
 const users = require('./routes/users');
 const vacation = require('./routes/vacation');
-
 const api = require('./routes/api');
 
+
 const app = express();
+app.disable('x-powered-by');
 
 mongoose.connect('mongodb://test:qingfei775@127.0.0.1/test', {
   useMongoClient: true,
+});
+
+const con = mongoose.connection;
+con.on('error', console.error.bind(console, '连接数据库失败'));
+con.once('open',()=>{
+  console.log('已成功连接数据库');
+  //成功连接
 });
 
 // view engine setup
@@ -79,7 +87,18 @@ switch (app.get('env')) {
     app.use(logger('dev'));
     break;
 }
-
+app.use(responseTime());
+app.use(express.static(path.join(__dirname, 'public'), {
+  dotfiles: 'ignore',
+  etag: false,
+  extensions: ['htm', 'html'],
+  index: false,
+  maxAge: '1d',
+  redirect: false,
+  setHeaders: function (res, path, stat) {
+    res.set('x-timestamp', Date.now());
+  }
+}));
 app.use(compression({filter: shouldCompress}));
 
 function shouldCompress (req, res) {
@@ -114,7 +133,6 @@ app.use(
     sourceMap: true
   })
 );
-app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function(req, res, next) {
   // 如果有即显消息，把它传到上下文中，然后清除它
@@ -132,9 +150,10 @@ app.use(function(req, res, next) {
 app.use('/', index);
 app.use('/users', users);
 app.use('/vacation', vacation);
-app.use('/api', api);
+app.use('/api', require('cors')(), api);
 
-app.disable('x-powered-by');
+
+// app.use();
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -149,10 +168,14 @@ app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  console.error(err.stack);
+  if (req.xhr) {
+    res.status(500).send({ error: err.stack });
+  } else {
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
+  }
 });
 
 module.exports = app;

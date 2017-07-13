@@ -19,11 +19,12 @@ router.get('/', function (req, res, next) {
     Vacation.find({available: true}, function (err, vacations) {
         const currency = req.session.currency || 'USD';
         const context = vacations.map(vacation => {
+            console.log(vacation);
             return {
                 sku: vacation.sku,
                 name: vacation.name,
                 description: vacation.description,
-                price: convertFromUSD(vacation.getDisplayPrice(), currency),
+                price: convertFromUSD(vacation.displayPrice, currency),
                 inSeason: vacation.inSeason,
             }
         });

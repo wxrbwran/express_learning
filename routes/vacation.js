@@ -3,7 +3,7 @@
  */
 const express = require('express');
 const router = express.Router();
-const Vacation = require('../models/vacations');
+const Vacation = require('../models/vacation');
 const VacationInSeasonListener = require('../models/vacationInSeasonListener');
 
 function convertFromUSD(value, currency){

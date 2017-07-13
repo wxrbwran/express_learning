@@ -16,6 +16,7 @@ const index = require('./routes/index');
 const users = require('./routes/users');
 const vacation = require('./routes/vacation');
 const api = require('./routes/api');
+// const rest = require('./routes/restful-api');
 
 
 const app = express();
@@ -90,10 +91,10 @@ switch (app.get('env')) {
 app.use(responseTime());
 app.use(express.static(path.join(__dirname, 'public'), {
   dotfiles: 'ignore',
-  etag: false,
+  etag: true,
   extensions: ['htm', 'html'],
   index: false,
-  maxAge: '1d',
+  maxAge: '1h',
   redirect: false,
   setHeaders: function (res, path, stat) {
     res.set('x-timestamp', Date.now());
@@ -151,9 +152,7 @@ app.use('/', index);
 app.use('/users', users);
 app.use('/vacation', vacation);
 app.use('/api', require('cors')(), api);
-
-
-// app.use();
+// app.use(rest);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -15,14 +15,14 @@ function smartJoin(arr, separator) {
     }).join(separator)
 }
 
-module.exports = function (customerId) {
-    const customer = Customer.findById(customerId);
-    if (!customer) {
-        return {
-            error: `Unknown customer id: ${customerId}`
-        }
-    }
-    const orders = customer.getCustomerOrder().map(order => {
+module.exports = function (customer) {
+    // const customer = Customer.findById(customerId);
+    // if (!customer) {
+    //     return {
+    //         error: `Unknown customer id: ${customerId}`
+    //     }
+    // }
+    const orders = customer.getOrder().map(order => {
         return {
             orderNumber: order.orderNumber,
             date: order.date,

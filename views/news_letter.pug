@@ -4,7 +4,7 @@ block content
     .formContainer
         form.form-horizontal(role="form"
             enctype="multipart/form-data" action="/process" method="POST")
-            input#csrf(type="hidden", name="_csrf", value=csrf )
+            input#_csrf(name='_csrf', value={_csrfToken}, type='hidden')
             .form-group
                 label.col-sm-2.control-label(for="name") Name
                 .col-sm-4
@@ -16,7 +16,7 @@ block content
             .form-group
                 label.col-sm-2.control-label(for='photo') File
                 .col-sm-4
-                    input#photo.form-control(type="file", accept="image/*", name="photo")
+                    input#photo.form-control(type="file", accept="image/jpg,image/png", name="photo")
             .form-group
                 .col-sm-offset-2.col-sm-4
                     button.btn.btn-default#submi(type="submit") Register

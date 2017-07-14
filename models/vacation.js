@@ -28,14 +28,15 @@ const vacationSchema = mongoose.Schema({
   collection: "vacations"
 });
 
-// vacationSchema.methods.getDisplayPrice = function () {
-//   return `${(this.priceInCents / 100).toFixed(2)}`;
-// };
+vacationSchema.methods.displayPrice = function () {
+  return `${(this.priceInCents / 100).toFixed(2)}`;
+};
 
 // virtual比methods 效率高
-vacationSchema.virtual('displayPrice').get(function() {
-  return `${(this.priceInCents / 100).toFixed(2)}`;
-});
+
+// vacationSchema.virtual('displayPrice').get(function() {
+//   return `${(this.priceInCents / 100).toFixed(2)}`;
+// });
 
 const Vacation = mongoose.model('Vacation', vacationSchema);
 

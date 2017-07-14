@@ -10,6 +10,8 @@ const compression = require('compression');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const MongoSessionStore = require('connect-mongo')(session);
+const helmet = require('helmet');
+const csurf = require('csurf');
 
 const credentials = require('./config/credentials.js');
 const index = require('./routes/index');
@@ -20,7 +22,6 @@ const api = require('./routes/api');
 
 
 const app = express();
-app.disable('x-powered-by');
 
 mongoose.connect('mongodb://test:qingfei775@127.0.0.1/test', {
   useMongoClient: true,
@@ -77,10 +78,12 @@ app.use( function (req, res, next){
   domain.run(next);
 });
 
+
+// require('./controllers/customer').registerRoutes(app);
 switch (app.get('env')) {
   case 'production':
-    app.use(require('express-logger')({
-      path: __dirname+'/log/request.log',
+    app.use(morgan('combined', {
+     skip: function (req, res) { return res.statusCode < 400 }
     }));
     break;
   case 'development':
@@ -88,6 +91,7 @@ switch (app.get('env')) {
     app.use(logger('dev'));
     break;
 }
+app.use(helmet());
 app.use(responseTime());
 app.use(express.static(path.join(__dirname, 'public'), {
   dotfiles: 'ignore',
@@ -101,7 +105,6 @@ app.use(express.static(path.join(__dirname, 'public'), {
   }
 }));
 app.use(compression({filter: shouldCompress}));
-
 function shouldCompress (req, res) {
   if (req.headers['x-no-compression']) {
     return false
@@ -109,6 +112,12 @@ function shouldCompress (req, res) {
   // fallback to standard filter function
   return compression.filter(req, res)
 }
+app.use(sassMiddleware({
+    src: path.join(__dirname, 'public'),
+    dest: path.join(__dirname, 'public'),
+    indentedSyntax: false, // true = .sass and false = .scss
+    sourceMap: true
+  }));
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(bodyParser.json());
@@ -125,15 +134,11 @@ app.use(session({
     url: 'mongodb://test:qingfei775@127.0.0.1/test',
   })
 }));
-
-app.use(
-  sassMiddleware({
-    src: path.join(__dirname, 'public'),
-    dest: path.join(__dirname, 'public'),
-    indentedSyntax: false, // true = .sass and false = .scss
-    sourceMap: true
-  })
-);
+// app.use(csurf({cookie: true}));
+// app.use(function (req, res, next){
+//   res.locals._csrfToken = req.csrfToken();
+//   next();
+// });
 
 app.use(function(req, res, next) {
   // 如果有即显消息，把它传到上下文中，然后清除它

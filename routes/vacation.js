@@ -24,7 +24,7 @@ router.get('/', function (req, res, next) {
                 sku: vacation.sku,
                 name: vacation.name,
                 description: vacation.description,
-                price: convertFromUSD(vacation.displayPrice, currency),
+                price: convertFromUSD(vacation.displayPrice(), currency),
                 inSeason: vacation.inSeason,
             }
         });

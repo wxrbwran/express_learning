@@ -26,7 +26,7 @@ const customerSchema = mongoose.Schema({
     collection: 'customers'
 });
 
-Customer.methods.getCustomerOrder = function () {
+customerSchema.methods.getOrder = function () {
     return Order.find({ customerId: this._id });
 };
 

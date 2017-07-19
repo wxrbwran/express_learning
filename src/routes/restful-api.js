@@ -1,10 +1,16 @@
-const express = require('express');
+const Rest = require('connect-rest');
+
 const Attraction = require('../models/attraction');
 
-const router = express.Router();
+const options = {
+  context: '/api',
+  domain: require('domain').create(),
+};
+
+const rest = Rest.create(options);
 
 /* GET users listing. */
-router.get('/tours', function(req, res, next) {
+rest.get('/tours', function(req, res, next) {
   const tours = [
     { id: 0, name: 'Hood River', price: 99.99 },
     { id: 1, name: 'Oregon Coast', price: 149.95 },
@@ -15,8 +21,8 @@ router.get('/tours', function(req, res, next) {
   });
 });
 
-router.get('/attractions', function(req, res, next) {
-  Attraction.find({approved: true}, (err, attractions)=> {
+rest.get('/attractions', function(req, res, next) {
+  Attraction.find({ approved: true }, (err, attractions) => {
     if (err) {
       return res.send(500, `Error: ${err.stack}`);
     }
@@ -27,14 +33,14 @@ router.get('/attractions', function(req, res, next) {
           name: attraction.name,
           id: attraction._id,
           description: attraction.description,
-          location: attraction.location
-        }
-      })
-    })
-  })
+          location: attraction.location,
+        };
+      }),
+    });
+  });
 });
 
-router.post('/attraction', function(req, res, next) {
+rest.post('/attraction', function(req, res, next) {
   const attraction = new Attraction({
     name: req.body.name,
     description: req.body.description,
@@ -56,27 +62,27 @@ router.post('/attraction', function(req, res, next) {
     res.json({
       status: 'success',
       data: {
-        id: a._id
-      }
-    })
-  })
+        id: a._id,
+      },
+    });
+  });
 });
 
-router.get('/attraction/:id', function(req, res, next) {
-  Attraction.findById(req.params.id, (err, attraction)=> {
+rest.get('/attraction/:id', function(req, res, next) {
+  Attraction.findById(req.params.id, (err, attraction) => {
     if (err) {
       return res.send(500, `Error: ${err.stack}`);
     }
     res.json({
       status: 'success',
       data: {
-          name: attraction.name,
-          id: attraction._id,
-          description: attraction.description,
-          location: attraction.location
-        }
-    })
-  })
+        name: attraction.name,
+        id: attraction._id,
+        description: attraction.description,
+        location: attraction.location,
+      },
+    });
+  });
 });
 
-module.exports = router;
+module.exports = rest.processRequest();

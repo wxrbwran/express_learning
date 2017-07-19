@@ -12,14 +12,14 @@ function startWorker() {
 
 if (cluster.isMaster) {
   console.log('Master');
-  require('os').cpus().forEach(function () {
+  require('os').cpus().forEach(function() {
     startWorker();
   });
-  cluster.on('disconnect', function (worker) {
+  cluster.on('disconnect', function(worker) {
     console.log(`CLUSTER: Woker ${worker.id} died with
      exit code ${code}(${signal})`);
     startWorker();
-  })
+  });
 } else {
   console.log('child');
   require('./www');

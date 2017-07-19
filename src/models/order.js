@@ -3,15 +3,17 @@
  */
 const mongoose = require('mongoose');
 
-const orderSchema = mongoose.Schema({
+const orderSchema = mongoose.Schema(
+  {
     customerId: String,
     orderNumber: Number,
     date: Date,
     status: Boolean,
-},{
-    collection: 'orders'
-});
-
+  },
+  {
+    collection: 'orders',
+  },
+);
 
 const Order = mongoose.model('Order', orderSchema);
 

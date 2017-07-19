@@ -33,8 +33,7 @@ router.get('/about', function(req, res, next) {
 
 router.get('/about/:userId', function(req, res, next) {
   res.type('text/plain');
-  console.log(req.params, req.query, req.body,
-    req.xhr, req.url);
+  console.log(req.params, req.query, req.body, req.xhr, req.url);
   res.send('about');
 });
 
@@ -49,14 +48,14 @@ router.get('/headers', function(req, res, next) {
 
 router.get('/test', function(req, res, next) {
   const data = {
-    currency: { name: 'United States dollars', abbrev: 'USD'},
+    currency: { name: 'United States dollars', abbrev: 'USD' },
     tours: [
       { name: 'Hood River', price: '$99.95' },
-      { name: 'Oregon Coast', price: '$159.95'}
+      { name: 'Oregon Coast', price: '$159.95' },
     ],
     specialsUrl: '/january-specials',
-    currencies: [ 'USD', 'GBP', 'BTC' ],
-  }
+    currencies: ['USD', 'GBP', 'BTC'],
+  };
   res.render('test', {
     currency: data.currency,
     tours: data.tours,
@@ -72,13 +71,12 @@ router.get('/home', function(req, res, next) {
   res.locals.partials.weather = getWeatherData();
   res.render('home');
 });
-router.get('/newsletter', function (req, res){
+router.get('/newsletter', function(req, res) {
   res.cookie('monster', 'mom mon');
-  res.cookie('signedMonster', 'mom mon11', {signed: true});
+  res.cookie('signedMonster', 'mom mon11', { signed: true });
   // 我们会在后面学到 CSRF……目前，只提供一个虚拟值
   res.render('news_letter', { csrf: 'CSRF token goes here' });
 });
-
 
 router.post('/process', upload.single('photo'), function(req, res) {
   const cookie = req.cookies.monster;
@@ -103,28 +101,31 @@ router.post('/process', upload.single('photo'), function(req, res) {
   }
 });
 
-function getWeatherData(){
+function getWeatherData() {
   return {
-    locations:
-      [ { name: 'Portland',
+    locations: [
+      {
+        name: 'Portland',
         forecastUrl: 'http://www.wunderground.com/US/OR/Portland.html',
         iconUrl: 'http://icons-ak.wxug.com/i/c/k/cloudy.gif',
         weather: 'Overcast',
         temp: '54.1 F (12.3 C)',
-        },
-        { name: 'Bend',
-          forecastUrl: 'http://www.wunderground.com/US/OR/Bend.html',
-          iconUrl: 'http://icons-ak.wxug.com/i/c/k/partlycloudy.gif',
-          weather: 'Partly Cloudy',
-          temp: '55.0 F (12.8 C)'
-        },
-        { name: 'Manzanita',
-          forecastUrl: 'http://www.wunderground.com/US/OR/Manzanita.html',
-          iconUrl: 'http://icons-ak.wxug.com/i/c/k/rain.gif',
-          weather: 'Light Rain',
-          temp: '55.0 F (12.8 C)'
-        }
-    ]
+      },
+      {
+        name: 'Bend',
+        forecastUrl: 'http://www.wunderground.com/US/OR/Bend.html',
+        iconUrl: 'http://icons-ak.wxug.com/i/c/k/partlycloudy.gif',
+        weather: 'Partly Cloudy',
+        temp: '55.0 F (12.8 C)',
+      },
+      {
+        name: 'Manzanita',
+        forecastUrl: 'http://www.wunderground.com/US/OR/Manzanita.html',
+        iconUrl: 'http://icons-ak.wxug.com/i/c/k/rain.gif',
+        weather: 'Light Rain',
+        temp: '55.0 F (12.8 C)',
+      },
+    ],
   };
 }
 

@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "NODE_ENV=development DEBUG=http,express:* nodemon ./bin/www",
-    "cluster": "NODE_ENV=development nodemon ./bin/www_cluster",
+    "start": "NODE_ENV=development DEBUG=http,express:* nodemon ./src/bin/www",
+    "cluster": "NODE_ENV=development nodemon ./src/bin/www_cluster",
     "build": "NODE_ENV=production babel app.js -d dist --presets es2015,stage-2",
-    "prettify": "prettier --write --print-width=80 --trailing-comma=all --single-quote=true 'config/**/*.js,routes/**/*.js,app.js'"
+    "prettify": "prettier --write --print-width=80 --trailing-comma=all --single-quote=true 'src/**/*.js'"
   },
   "dependencies": {
     "body-parser": "~1.17.1",

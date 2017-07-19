@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const favicon = require('serve-favicon');
-const responseTime = require('response-time')
+const responseTime = require('response-time');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
@@ -20,7 +20,6 @@ const vacation = require('./routes/vacation');
 const api = require('./routes/api');
 // const rest = require('./routes/restful-api');
 
-
 const app = express();
 
 mongoose.connect('mongodb://test:qingfei775@127.0.0.1/test', {
@@ -29,7 +28,7 @@ mongoose.connect('mongodb://test:qingfei775@127.0.0.1/test', {
 
 const con = mongoose.connection;
 con.on('error', console.error.bind(console, '连接数据库失败'));
-con.once('open',()=>{
+con.once('open', () => {
   console.log('已成功连接数据库');
   //成功连接
 });
@@ -43,15 +42,18 @@ app.set('view engine', 'pug');
 * 添加一个中间件就可以非常轻松地满足这 个要求。
 * 这个中间件应该在所有其他路由或中间件前面：
 * */
-app.use( function (req, res, next){
+app.use(function(req, res, next) {
   // 为这个请求创建一个域
   var domain = require('domain').create();
   // 处理这个域中的错误
-  domain.on('error', function (err) {
+  domain.on('error', function(err) {
     console.error('DOMAIN ERROR CAUGHT\n', err.stack);
-    try { // 在 5 秒内进行故障保护关机
-      setTimeout(function (){ console.error('Failsafe shutdown.');
-        process.exit(1); }, 5000);
+    try {
+      // 在 5 秒内进行故障保护关机
+      setTimeout(function() {
+        console.error('Failsafe shutdown.');
+        process.exit(1);
+      }, 5000);
       // 从集群中断开
       var worker = require('cluster').worker;
       if (worker) worker.disconnect();
@@ -67,7 +69,7 @@ app.use( function (req, res, next){
         res.setHeader('content-type', 'text/plain');
         res.end('Server error.');
       }
-    } catch (err){
+    } catch (err) {
       console.error('Unable to send 500 response.\n', err.stack);
     }
   });
@@ -78,13 +80,16 @@ app.use( function (req, res, next){
   domain.run(next);
 });
 
-
 // require('./controllers/customer').registerRoutes(app);
 switch (app.get('env')) {
   case 'production':
-    app.use(morgan('combined', {
-     skip: function (req, res) { return res.statusCode < 400 }
-    }));
+    app.use(
+      morgan('combined', {
+        skip: function(req, res) {
+          return res.statusCode < 400;
+        },
+      }),
+    );
     break;
   case 'development':
   default:
@@ -93,47 +98,53 @@ switch (app.get('env')) {
 }
 app.use(helmet());
 app.use(responseTime());
-app.use(express.static(path.join(__dirname, 'public'), {
-  dotfiles: 'ignore',
-  etag: true,
-  extensions: ['htm', 'html'],
-  index: false,
-  maxAge: '1h',
-  redirect: false,
-  setHeaders: function (res, path, stat) {
-    res.set('x-timestamp', Date.now());
-  }
-}));
-app.use(compression({filter: shouldCompress}));
-function shouldCompress (req, res) {
+app.use(
+  express.static(path.join(__dirname, 'public'), {
+    dotfiles: 'ignore',
+    etag: true,
+    extensions: ['htm', 'html'],
+    index: false,
+    maxAge: '1h',
+    redirect: false,
+    setHeaders: function(res, path, stat) {
+      res.set('x-timestamp', Date.now());
+    },
+  }),
+);
+app.use(compression({ filter: shouldCompress }));
+function shouldCompress(req, res) {
   if (req.headers['x-no-compression']) {
-    return false
+    return false;
   }
   // fallback to standard filter function
-  return compression.filter(req, res)
+  return compression.filter(req, res);
 }
-app.use(sassMiddleware({
+app.use(
+  sassMiddleware({
     src: path.join(__dirname, 'public'),
     dest: path.join(__dirname, 'public'),
     indentedSyntax: false, // true = .sass and false = .scss
-    sourceMap: true
-  }));
+    sourceMap: true,
+  }),
+);
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser(credentials.cookieSecret));
-app.use(session({
-  secret: 'RE7ty87gyF^%RT&^UYgvc6Ut*gyV5&YUTR#%$%&^*IGFRDFCNH',
-  key: 'test', //db_config.module.database,//cookie name
-  cookie: {maxAge: 1000*60*60*24*7},//7 days
-  resave: false,
-  saveUninitialized: true,
-  store: new MongoSessionStore({
-    db: 'sessions',
-    url: 'mongodb://test:qingfei775@127.0.0.1/test',
-  })
-}));
+app.use(
+  session({
+    secret: 'RE7ty87gyF^%RT&^UYgvc6Ut*gyV5&YUTR#%$%&^*IGFRDFCNH',
+    key: 'test', //db_config.module.database,//cookie name
+    cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 }, //7 days
+    resave: false,
+    saveUninitialized: true,
+    store: new MongoSessionStore({
+      db: 'sessions',
+      url: 'mongodb://test:qingfei775@127.0.0.1/test',
+    }),
+  }),
+);
 // app.use(csurf({cookie: true}));
 // app.use(function (req, res, next){
 //   res.locals._csrfToken = req.csrfToken();

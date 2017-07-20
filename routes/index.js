@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
-
 const multer = require('multer');
+const csurf = require('csurf');
+
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
     cb(null, 'uploads/');
@@ -15,6 +16,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+const Customer = require('../models/customer');
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   const { a, as1 } = req.query;
@@ -24,46 +27,57 @@ router.get('/', function(req, res, next) {
     userName: !!req.session ? req.session.userName : null,
   });
 });
-router.get('/about', function(req, res, next) {
-  res.render('about', {
-    title: 'about',
-    text: 'about me',
-  });
+
+router.get('/register', function(req, res, next) {
+  res.render('register');
 });
 
-router.get('/about/:userId', function(req, res, next) {
-  res.type('text/plain');
-  console.log(req.params, req.query, req.body,
-    req.xhr, req.url);
-  res.send('about');
-});
-
-router.get('/headers', function(req, res, next) {
-  res.type('text/plain');
-  let s = '';
-  for (let k in req.headers) {
-    s += `${k}:${req.headers[k]}\n`;
+router.post('/register', function(req, res, next) {
+  const email = req.body.email;
+  const password = req.body.password;
+  const password2 = req.body.password2;
+  console.log(email, password, password2);
+  if (password === password2) {
+    const customer = new Customer({
+      email: email,
+      password: password,
+    });
+    Customer.findOne({'email': email}, function (err, user) {
+      if (!! user && user.email === email) {
+        req.session.flash = {
+          type: 'fail',
+          intro: '错误!',
+          message: '该邮箱已存在！',
+        };
+        return res.redirect(303, '/register');
+      } else {
+        customer.save(function (err, customer) {
+          if (err) {
+            return res.redirect(303, '/register', {
+              message: '注册失败！',
+              error: error,
+            })
+          } else {
+            req.session.flash = {
+              type: 'success',
+              intro: '恭喜!',
+              message: '注册成功！',
+            };
+            return res.redirect(303, '/login');
+          }
+        });
+      }
+    })
+  } else {
+    next();
   }
-  res.send(s);
 });
 
-router.get('/test', function(req, res, next) {
-  const data = {
-    currency: { name: 'United States dollars', abbrev: 'USD'},
-    tours: [
-      { name: 'Hood River', price: '$99.95' },
-      { name: 'Oregon Coast', price: '$159.95'}
-    ],
-    specialsUrl: '/january-specials',
-    currencies: [ 'USD', 'GBP', 'BTC' ],
-  }
-  res.render('test', {
-    currency: data.currency,
-    tours: data.tours,
-    specialsUrl: data.specialsUrl,
-    currencies: data.currencies,
-  });
+router.get('/login', function(req, res, next) {
+  res.render('login');
 });
+
+
 
 router.get('/home', function(req, res, next) {
   if (!res.locals.partials) {
@@ -80,7 +94,9 @@ router.get('/newsletter', function (req, res){
 });
 
 
-router.post('/process', upload.single('photo'), function(req, res) {
+router.post('/process',
+  upload.single('photo'),
+  function(req, res) {
   const cookie = req.cookies.monster;
   const signedCookie = req.signedCookies.signedMonster;
   res.clearCookie('monster');

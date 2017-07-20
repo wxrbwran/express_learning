@@ -5,15 +5,22 @@ const mongoose = require('mongoose');
 const Order = require('./order');
 
 const customerSchema = mongoose.Schema({
+    email: {
+        type: String,
+        required: true,
+    },
+    password: {
+        type: String,
+        required: true,
+    },
+    phone: String,
     firstName: String,
     lastName: String,
-    email: String,
     address1: String,
     address2: String,
     city: String,
     state: String,
     zip: String,
-    phone: String,
     salesNotes: [{
         data: {
             type: Date,

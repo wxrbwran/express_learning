@@ -19,7 +19,7 @@ const users = require('./routes/users');
 const vacation = require('./routes/vacation');
 const api = require('./routes/api');
 // const rest = require('./routes/restful-api');
-
+const customerController  = require('./controllers/customer')
 
 const app = express();
 
@@ -43,43 +43,7 @@ app.set('view engine', 'pug');
 * 添加一个中间件就可以非常轻松地满足这 个要求。
 * 这个中间件应该在所有其他路由或中间件前面：
 * */
-app.use( function (req, res, next){
-  // 为这个请求创建一个域
-  var domain = require('domain').create();
-  // 处理这个域中的错误
-  domain.on('error', function (err) {
-    console.error('DOMAIN ERROR CAUGHT\n', err.stack);
-    try { // 在 5 秒内进行故障保护关机
-      setTimeout(function (){ console.error('Failsafe shutdown.');
-        process.exit(1); }, 5000);
-      // 从集群中断开
-      var worker = require('cluster').worker;
-      if (worker) worker.disconnect();
-      // 停止接收新请求
-      server.close();
-      try {
-        // 尝试使用 Express 错误路由
-        next(err);
-      } catch (err) {
-        // 如果 Express 错误路由失效，尝试返回普通文本响应
-        console.error('Express error mechanism failed.\n', err.stack);
-        res.statusCode = 500;
-        res.setHeader('content-type', 'text/plain');
-        res.end('Server error.');
-      }
-    } catch (err){
-      console.error('Unable to send 500 response.\n', err.stack);
-    }
-  });
-  // 向域中添加请求和响应对象
-  domain.add(req);
-  domain.add(res);
-  // 执行该域中剩余的请求链
-  domain.run(next);
-});
 
-
-// require('./controllers/customer').registerRoutes(app);
 switch (app.get('env')) {
   case 'production':
     app.use(morgan('combined', {
@@ -134,9 +98,12 @@ app.use(session({
     url: 'mongodb://test:qingfei775@127.0.0.1/test',
   })
 }));
-// app.use(csurf({cookie: true}));
+// app.use(csurf());
 // app.use(function (req, res, next){
-//   res.locals._csrfToken = req.csrfToken();
+//   // const token = req.csrfToken();
+//   const token = req.session ? req.session.csrfSecret : "";
+//   console.log(token)
+//   res.locals._csrfToken = token;
 //   next();
 // });
 
@@ -152,6 +119,8 @@ app.use(function(req, res, next) {
 //   if (cluster.isWorker)
 //     console.log('Worker %d received request', cluster.worker.id);
 // });
+
+customerController.registerRoutes(app);
 
 app.use('/', index);
 app.use('/users', users);

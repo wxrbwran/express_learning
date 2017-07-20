@@ -17,7 +17,9 @@ module.exports = {
         if (!customer) {
             return next(); // 404
         }
-        res.render('/customer/home', customerViewModel(customer));
+        // res.render('/customer/home', customerViewModel(customer));
+        res.redirect(303, '/home');
+
     },
     preferences(req, res, next) {
         const customer = Customer.findById(req.params.id);

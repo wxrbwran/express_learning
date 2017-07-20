@@ -4,7 +4,7 @@ block content
     .formContainer
         form.form-horizontal(role="form"
             enctype="multipart/form-data" action="/process" method="POST")
-            input#_csrf(name='_csrf', value={_csrfToken}, type='hidden')
+            input#_csrf(name='_csrf', value=_csrfToken, type='hidden')
             .form-group
                 label.col-sm-2.control-label(for="name") Name
                 .col-sm-4

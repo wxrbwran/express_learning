@@ -4,16 +4,9 @@
 const mongoose = require('mongoose');
 const Order = require('./order');
 
-const customerSchema = mongoose.Schema({
-    email: {
-        type: String,
-        required: true,
-    },
-    password: {
-        type: String,
-        required: true,
-    },
-    phone: String,
+
+const customerSchema = mongoose.Schema(
+  {
     firstName: String,
     lastName: String,
     address1: String,
@@ -21,20 +14,25 @@ const customerSchema = mongoose.Schema({
     city: String,
     state: String,
     zip: String,
-    salesNotes: [{
+    phone: String,
+    salesNotes: [
+      {
         data: {
-            type: Date,
-            default: Date.now(),
+          type: Date,
+          default: Date.now(),
         },
         salespersonId: Number,
         notes: String,
-    }]
-},{
-    collection: 'customers'
-});
+      },
+    ],
+  },
+  {
+    collection: 'customers',
+  },
+);
 
-customerSchema.methods.getOrder = function () {
-    return Order.find({ customerId: this._id });
+customerSchema.methods.getOrder = function() {
+  return Order.find({ customerId: this._id });
 };
 
 const Customer = mongoose.model('Customer', customerSchema);

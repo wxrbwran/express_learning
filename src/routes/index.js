@@ -86,9 +86,9 @@ router.get('/home', function(req, res, next) {
   res.locals.partials.weather = getWeatherData();
   res.render('home');
 });
-router.get('/newsletter', function (req, res){
+router.get('/newsletter', function(req, res) {
   res.cookie('monster', 'mom mon');
-  res.cookie('signedMonster', 'mom mon11', {signed: true});
+  res.cookie('signedMonster', 'mom mon11', { signed: true });
   // 我们会在后面学到 CSRF……目前，只提供一个虚拟值
   res.render('news_letter', { csrf: 'CSRF token goes here' });
 });
@@ -119,28 +119,31 @@ router.post('/process',
   }
 });
 
-function getWeatherData(){
+function getWeatherData() {
   return {
-    locations:
-      [ { name: 'Portland',
+    locations: [
+      {
+        name: 'Portland',
         forecastUrl: 'http://www.wunderground.com/US/OR/Portland.html',
         iconUrl: 'http://icons-ak.wxug.com/i/c/k/cloudy.gif',
         weather: 'Overcast',
         temp: '54.1 F (12.3 C)',
-        },
-        { name: 'Bend',
-          forecastUrl: 'http://www.wunderground.com/US/OR/Bend.html',
-          iconUrl: 'http://icons-ak.wxug.com/i/c/k/partlycloudy.gif',
-          weather: 'Partly Cloudy',
-          temp: '55.0 F (12.8 C)'
-        },
-        { name: 'Manzanita',
-          forecastUrl: 'http://www.wunderground.com/US/OR/Manzanita.html',
-          iconUrl: 'http://icons-ak.wxug.com/i/c/k/rain.gif',
-          weather: 'Light Rain',
-          temp: '55.0 F (12.8 C)'
-        }
-    ]
+      },
+      {
+        name: 'Bend',
+        forecastUrl: 'http://www.wunderground.com/US/OR/Bend.html',
+        iconUrl: 'http://icons-ak.wxug.com/i/c/k/partlycloudy.gif',
+        weather: 'Partly Cloudy',
+        temp: '55.0 F (12.8 C)',
+      },
+      {
+        name: 'Manzanita',
+        forecastUrl: 'http://www.wunderground.com/US/OR/Manzanita.html',
+        iconUrl: 'http://icons-ak.wxug.com/i/c/k/rain.gif',
+        weather: 'Light Rain',
+        temp: '55.0 F (12.8 C)',
+      },
+    ],
   };
 }
 

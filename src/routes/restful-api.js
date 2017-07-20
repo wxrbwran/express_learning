@@ -4,7 +4,7 @@ const Attraction = require('../models/attraction');
 
 const options = {
   context: '/api',
-  domain: require('domain').create(),
+  domain: require('domain').create()
 };
 
 const rest = Rest.create(options);
@@ -13,11 +13,11 @@ const rest = Rest.create(options);
 rest.get('/tours', function(req, res, next) {
   const tours = [
     { id: 0, name: 'Hood River', price: 99.99 },
-    { id: 1, name: 'Oregon Coast', price: 149.95 },
+    { id: 1, name: 'Oregon Coast', price: 149.95 }
   ];
   res.json({
     status: 'success',
-    data: tours,
+    data: tours
   });
 });
 
@@ -33,9 +33,9 @@ rest.get('/attractions', function(req, res, next) {
           name: attraction.name,
           id: attraction._id,
           description: attraction.description,
-          location: attraction.location,
+          location: attraction.location
         };
-      }),
+      })
     });
   });
 });
@@ -46,14 +46,14 @@ rest.post('/attraction', function(req, res, next) {
     description: req.body.description,
     location: {
       lat: req.body.lat,
-      lng: req.body.lng,
+      lng: req.body.lng
     },
     history: {
       event: 'created',
       email: req.body.email,
-      date: new Date(),
+      date: new Date()
     },
-    approved: false,
+    approved: false
   });
   attraction.save((err, a) => {
     if (err) {
@@ -62,8 +62,8 @@ rest.post('/attraction', function(req, res, next) {
     res.json({
       status: 'success',
       data: {
-        id: a._id,
-      },
+        id: a._id
+      }
     });
   });
 });
@@ -79,8 +79,8 @@ rest.get('/attraction/:id', function(req, res, next) {
         name: attraction.name,
         id: attraction._id,
         description: attraction.description,
-        location: attraction.location,
-      },
+        location: attraction.location
+      }
     });
   });
 });

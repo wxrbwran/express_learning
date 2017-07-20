@@ -4,7 +4,6 @@
 const mongoose = require('mongoose');
 const Order = require('./order');
 
-
 const customerSchema = mongoose.Schema(
   {
     firstName: String,
@@ -19,16 +18,16 @@ const customerSchema = mongoose.Schema(
       {
         data: {
           type: Date,
-          default: Date.now(),
+          default: Date.now()
         },
         salespersonId: Number,
-        notes: String,
-      },
-    ],
+        notes: String
+      }
+    ]
   },
   {
-    collection: 'customers',
-  },
+    collection: 'customers'
+  }
 );
 
 customerSchema.methods.getOrder = function() {

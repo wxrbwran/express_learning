@@ -7,11 +7,11 @@ const router = express.Router();
 router.get('/tours', function(req, res, next) {
   const tours = [
     { id: 0, name: 'Hood River', price: 99.99 },
-    { id: 1, name: 'Oregon Coast', price: 149.95 },
+    { id: 1, name: 'Oregon Coast', price: 149.95 }
   ];
   res.json({
     status: 'success',
-    data: tours,
+    data: tours
   });
 });
 
@@ -27,9 +27,9 @@ router.get('/attractions', function(req, res, next) {
           name: attraction.name,
           id: attraction._id,
           description: attraction.description,
-          location: attraction.location,
+          location: attraction.location
         };
-      }),
+      })
     });
   });
 });
@@ -40,14 +40,14 @@ router.post('/attraction', function(req, res, next) {
     description: req.body.description,
     location: {
       lat: req.body.lat,
-      lng: req.body.lng,
+      lng: req.body.lng
     },
     history: {
       event: 'created',
       email: req.body.email,
-      date: new Date(),
+      date: new Date()
     },
-    approved: false,
+    approved: false
   });
   attraction.save((err, a) => {
     if (err) {
@@ -56,8 +56,8 @@ router.post('/attraction', function(req, res, next) {
     res.json({
       status: 'success',
       data: {
-        id: a._id,
-      },
+        id: a._id
+      }
     });
   });
 });
@@ -73,8 +73,8 @@ router.get('/attraction/:id', function(req, res, next) {
         name: attraction.name,
         id: attraction._id,
         description: attraction.description,
-        location: attraction.location,
-      },
+        location: attraction.location
+      }
     });
   });
 });

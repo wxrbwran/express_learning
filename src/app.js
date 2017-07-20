@@ -20,12 +20,12 @@ const vacation = require('./routes/vacation');
 const api = require('./routes/api');
 // const rest = require('./routes/restful-api');
 
-const customerController  = require('./controllers/customer')
+const customerController = require('./controllers/customer');
 
 const app = express();
 
 mongoose.connect('mongodb://test:qingfei775@127.0.0.1/test', {
-  useMongoClient: true,
+  useMongoClient: true
 });
 
 const con = mongoose.connection;
@@ -87,8 +87,8 @@ switch (app.get('env')) {
       morgan('combined', {
         skip: function(req, res) {
           return res.statusCode < 400;
-        },
-      }),
+        }
+      })
     );
     break;
   case 'development':
@@ -108,8 +108,8 @@ app.use(
     redirect: false,
     setHeaders: function(res, path, stat) {
       res.set('x-timestamp', Date.now());
-    },
-  }),
+    }
+  })
 );
 app.use(compression({ filter: shouldCompress }));
 function shouldCompress(req, res) {
@@ -124,8 +124,8 @@ app.use(
     src: path.join(__dirname, 'public'),
     dest: path.join(__dirname, 'public'),
     indentedSyntax: false, // true = .sass and false = .scss
-    sourceMap: true,
-  }),
+    sourceMap: true
+  })
 );
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -141,9 +141,9 @@ app.use(
     saveUninitialized: true,
     store: new MongoSessionStore({
       db: 'sessions',
-      url: 'mongodb://test:qingfei775@127.0.0.1/test',
-    }),
-  }),
+      url: 'mongodb://test:qingfei775@127.0.0.1/test'
+    })
+  })
 );
 // app.use(csurf({cookie: true}));
 // app.use(function (req, res, next){

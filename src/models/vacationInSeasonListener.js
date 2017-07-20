@@ -6,16 +6,16 @@ const mongoose = require('mongoose');
 const vacationInSeasonListener = mongoose.Schema(
   {
     email: String,
-    sku: [String],
+    sku: [String]
   },
   {
-    collection: 'vacationInSeasonListeners',
-  },
+    collection: 'vacationInSeasonListeners'
+  }
 );
 
 const VacationInSeasonListener = mongoose.model(
   'VacationInSeasonListener',
-  vacationInSeasonListener,
+  vacationInSeasonListener
 );
 
 module.exports = VacationInSeasonListener;

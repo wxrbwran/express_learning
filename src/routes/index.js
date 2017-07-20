@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
     const fileNameArray = file.originalname.split('.');
     const ext = fileNameArray[fileNameArray.length - 1];
     cb(null, `${file.fieldname}-${Date.now()}.${ext}`);
-  },
+  }
 });
 const upload = multer({ storage });
 
@@ -24,7 +24,7 @@ router.get('/', function(req, res, next) {
   console.log(a, as1);
   res.render('index', {
     title: 'Express',
-    userName: !!req.session ? req.session.userName : null,
+    userName: !!req.session ? req.session.userName : null
   });
 });
 
@@ -40,34 +40,34 @@ router.post('/register', function(req, res, next) {
   if (password === password2) {
     const customer = new Customer({
       email: email,
-      password: password,
+      password: password
     });
-    Customer.findOne({'email': email}, function (err, user) {
-      if (!! user && user.email === email) {
+    Customer.findOne({ email: email }, function(err, user) {
+      if (!!user && user.email === email) {
         req.session.flash = {
           type: 'fail',
           intro: '错误!',
-          message: '该邮箱已存在！',
+          message: '该邮箱已存在！'
         };
         return res.redirect(303, '/register');
       } else {
-        customer.save(function (err, customer) {
+        customer.save(function(err, customer) {
           if (err) {
             return res.redirect(303, '/register', {
               message: '注册失败！',
-              error: error,
-            })
+              error: error
+            });
           } else {
             req.session.flash = {
               type: 'success',
               intro: '恭喜!',
-              message: '注册成功！',
+              message: '注册成功！'
             };
             return res.redirect(303, '/login');
           }
         });
       }
-    })
+    });
   } else {
     next();
   }
@@ -76,8 +76,6 @@ router.post('/register', function(req, res, next) {
 router.get('/login', function(req, res, next) {
   res.render('login');
 });
-
-
 
 router.get('/home', function(req, res, next) {
   if (!res.locals.partials) {
@@ -93,10 +91,7 @@ router.get('/newsletter', function(req, res) {
   res.render('news_letter', { csrf: 'CSRF token goes here' });
 });
 
-
-router.post('/process',
-  upload.single('photo'),
-  function(req, res) {
+router.post('/process', upload.single('photo'), function(req, res) {
   const cookie = req.cookies.monster;
   const signedCookie = req.signedCookies.signedMonster;
   res.clearCookie('monster');
@@ -112,7 +107,7 @@ router.post('/process',
     req.session.flash = {
       type: 'danger',
       intro: 'Validation!',
-      message: 'The email address',
+      message: 'The email address'
     };
     req.session.userName = req.body.name;
     res.redirect(303, '/home');
@@ -127,23 +122,23 @@ function getWeatherData() {
         forecastUrl: 'http://www.wunderground.com/US/OR/Portland.html',
         iconUrl: 'http://icons-ak.wxug.com/i/c/k/cloudy.gif',
         weather: 'Overcast',
-        temp: '54.1 F (12.3 C)',
+        temp: '54.1 F (12.3 C)'
       },
       {
         name: 'Bend',
         forecastUrl: 'http://www.wunderground.com/US/OR/Bend.html',
         iconUrl: 'http://icons-ak.wxug.com/i/c/k/partlycloudy.gif',
         weather: 'Partly Cloudy',
-        temp: '55.0 F (12.8 C)',
+        temp: '55.0 F (12.8 C)'
       },
       {
         name: 'Manzanita',
         forecastUrl: 'http://www.wunderground.com/US/OR/Manzanita.html',
         iconUrl: 'http://icons-ak.wxug.com/i/c/k/rain.gif',
         weather: 'Light Rain',
-        temp: '55.0 F (12.8 C)',
-      },
-    ],
+        temp: '55.0 F (12.8 C)'
+      }
+    ]
   };
 }
 

@@ -39,7 +39,7 @@ module.exports = {
       return res.json({
         status: 'error',
         data: null,
-        message: '用户ID不存在!',
+        message: '用户ID不存在!'
       });
     }
     if (req.body.firstName) {
@@ -50,14 +50,14 @@ module.exports = {
         return res.json({
           status: 'error',
           data: null,
-          message: '不合法的firstName!',
+          message: '不合法的firstName!'
         });
       }
       customer.save();
       return res.json({
         status: 'success',
-        data: customer,
+        data: customer
       });
     }
-  },
+  }
 };

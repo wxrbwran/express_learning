@@ -7,7 +7,7 @@ const vacationSchema = mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, '请填写姓名!'],
+      required: [true, '请填写姓名!']
     },
     slug: String,
     category: String,
@@ -16,7 +16,7 @@ const vacationSchema = mongoose.Schema(
     priceInCents: {
       type: Number,
       min: [0.1, '太小了!'],
-      max: 9999999,
+      max: 9999999
     },
     tags: [String],
     inSeason: Boolean,
@@ -24,11 +24,11 @@ const vacationSchema = mongoose.Schema(
     requiresWaiver: Boolean,
     maximumGuests: Number,
     notes: String,
-    packagesSold: Number,
+    packagesSold: Number
   },
   {
-    collection: 'vacations',
-  },
+    collection: 'vacations'
+  }
 );
 
 vacationSchema.methods.displayPrice = function() {

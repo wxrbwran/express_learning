@@ -8,11 +8,11 @@ const orderSchema = mongoose.Schema(
     customerId: String,
     orderNumber: Number,
     date: Date,
-    status: Boolean,
+    status: Boolean
   },
   {
-    collection: 'orders',
-  },
+    collection: 'orders'
+  }
 );
 
 const Order = mongoose.model('Order', orderSchema);

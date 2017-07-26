@@ -8,7 +8,6 @@ const customerSchema = mongoose.Schema(
   {
     firstName: String,
     lastName: String,
-    email: String,
     address1: String,
     address2: String,
     city: String,
@@ -19,16 +18,16 @@ const customerSchema = mongoose.Schema(
       {
         data: {
           type: Date,
-          default: Date.now(),
+          default: Date.now()
         },
         salespersonId: Number,
-        notes: String,
-      },
-    ],
+        notes: String
+      }
+    ]
   },
   {
-    collection: 'customers',
-  },
+    collection: 'customers'
+  }
 );
 
 customerSchema.methods.getOrder = function() {

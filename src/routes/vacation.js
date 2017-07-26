@@ -29,11 +29,11 @@ router.get('/', function(req, res, next) {
         name: vacation.name,
         description: vacation.description,
         price: convertFromUSD(vacation.displayPrice(), currency),
-        inSeason: vacation.inSeason,
+        inSeason: vacation.inSeason
       };
     });
     res.render('vacation', {
-      vacations: context,
+      vacations: context
     });
   });
 });
@@ -45,7 +45,7 @@ router.get('/set-currency/:currency', function(req, res) {
 
 router.get('/notify-me', function(req, res, next) {
   res.render('notify-me', {
-    sku: req.query.sku,
+    sku: req.query.sku
   });
 });
 router.post('/notify-me', function(req, res, next) {
@@ -59,18 +59,18 @@ router.post('/notify-me', function(req, res, next) {
         req.session.flash = {
           type: 'danger',
           intro: 'Ooops!',
-          message: 'there was an error...',
+          message: 'there was an error...'
         };
         return res.redirect(303, '/vacation');
       } else {
         req.session.flash = {
           type: 'success',
           intro: 'Thank you!',
-          message: 'You will be notified when this vacation is in season.',
+          message: 'You will be notified when this vacation is in season.'
         };
         return res.redirect(303, '/vacation');
       }
-    },
+    }
   );
 });
 

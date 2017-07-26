@@ -9,7 +9,7 @@ const attractionSchema = mongoose.Schema(
     description: String,
     location: {
       lat: Number,
-      lng: Number,
+      lng: Number
     },
     history: {
       event: String,
@@ -17,15 +17,15 @@ const attractionSchema = mongoose.Schema(
       email: String,
       date: {
         type: Date,
-        default: Date.now(),
-      },
+        default: Date.now()
+      }
     },
     updateId: String,
-    approved: Boolean,
+    approved: Boolean
   },
   {
-    collection: 'attractions',
-  },
+    collection: 'attractions'
+  }
 );
 
 const Attraction = mongoose.model('Attraction', attractionSchema);

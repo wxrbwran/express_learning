@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
-
 const multer = require('multer');
+const csurf = require('csurf');
+
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
     cb(null, 'uploads/');
@@ -11,9 +12,11 @@ const storage = multer.diskStorage({
     const fileNameArray = file.originalname.split('.');
     const ext = fileNameArray[fileNameArray.length - 1];
     cb(null, `${file.fieldname}-${Date.now()}.${ext}`);
-  },
+  }
 });
 const upload = multer({ storage });
+
+const Customer = require('../models/customer');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -21,47 +24,57 @@ router.get('/', function(req, res, next) {
   console.log(a, as1);
   res.render('index', {
     title: 'Express',
-    userName: !!req.session ? req.session.userName : null,
-  });
-});
-router.get('/about', function(req, res, next) {
-  res.render('about', {
-    title: 'about',
-    text: 'about me',
+    userName: !!req.session ? req.session.userName : null
   });
 });
 
-router.get('/about/:userId', function(req, res, next) {
-  res.type('text/plain');
-  console.log(req.params, req.query, req.body, req.xhr, req.url);
-  res.send('about');
+router.get('/register', function(req, res, next) {
+  res.render('register');
 });
 
-router.get('/headers', function(req, res, next) {
-  res.type('text/plain');
-  let s = '';
-  for (let k in req.headers) {
-    s += `${k}:${req.headers[k]}\n`;
+router.post('/register', function(req, res, next) {
+  const email = req.body.email;
+  const password = req.body.password;
+  const password2 = req.body.password2;
+  console.log(email, password, password2);
+  if (password === password2) {
+    const customer = new Customer({
+      email: email,
+      password: password
+    });
+    Customer.findOne({ email: email }, function(err, user) {
+      if (!!user && user.email === email) {
+        req.session.flash = {
+          type: 'fail',
+          intro: '错误!',
+          message: '该邮箱已存在！'
+        };
+        return res.redirect(303, '/register');
+      } else {
+        customer.save(function(err, customer) {
+          if (err) {
+            return res.redirect(303, '/register', {
+              message: '注册失败！',
+              error: error
+            });
+          } else {
+            req.session.flash = {
+              type: 'success',
+              intro: '恭喜!',
+              message: '注册成功！'
+            };
+            return res.redirect(303, '/login');
+          }
+        });
+      }
+    });
+  } else {
+    next();
   }
-  res.send(s);
 });
 
-router.get('/test', function(req, res, next) {
-  const data = {
-    currency: { name: 'United States dollars', abbrev: 'USD' },
-    tours: [
-      { name: 'Hood River', price: '$99.95' },
-      { name: 'Oregon Coast', price: '$159.95' },
-    ],
-    specialsUrl: '/january-specials',
-    currencies: ['USD', 'GBP', 'BTC'],
-  };
-  res.render('test', {
-    currency: data.currency,
-    tours: data.tours,
-    specialsUrl: data.specialsUrl,
-    currencies: data.currencies,
-  });
+router.get('/login', function(req, res, next) {
+  res.render('login');
 });
 
 router.get('/home', function(req, res, next) {
@@ -94,7 +107,7 @@ router.post('/process', upload.single('photo'), function(req, res) {
     req.session.flash = {
       type: 'danger',
       intro: 'Validation!',
-      message: 'The email address',
+      message: 'The email address'
     };
     req.session.userName = req.body.name;
     res.redirect(303, '/home');
@@ -109,23 +122,23 @@ function getWeatherData() {
         forecastUrl: 'http://www.wunderground.com/US/OR/Portland.html',
         iconUrl: 'http://icons-ak.wxug.com/i/c/k/cloudy.gif',
         weather: 'Overcast',
-        temp: '54.1 F (12.3 C)',
+        temp: '54.1 F (12.3 C)'
       },
       {
         name: 'Bend',
         forecastUrl: 'http://www.wunderground.com/US/OR/Bend.html',
         iconUrl: 'http://icons-ak.wxug.com/i/c/k/partlycloudy.gif',
         weather: 'Partly Cloudy',
-        temp: '55.0 F (12.8 C)',
+        temp: '55.0 F (12.8 C)'
       },
       {
         name: 'Manzanita',
         forecastUrl: 'http://www.wunderground.com/US/OR/Manzanita.html',
         iconUrl: 'http://icons-ak.wxug.com/i/c/k/rain.gif',
         weather: 'Light Rain',
-        temp: '55.0 F (12.8 C)',
-      },
-    ],
+        temp: '55.0 F (12.8 C)'
+      }
+    ]
   };
 }
 

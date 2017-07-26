@@ -1,0 +1,19 @@
+extends layout
+
+block content
+    form.form-horizontal(method='post' action='/register' enctype="application/x-www-form-urlencoded")
+        div.form-group
+            label.col-sm-2.control-label(for="email") Email
+            div.col-sm-10
+                input.form-control#email(type="email" required name='email' placeholder="Email")
+        div.form-group
+            label.col-sm-2.control-label(for="password") Password
+            div.col-sm-10
+                input.form-control#password(type="password" required name='password' placeholder="Password")
+        div.form-group
+            label.col-sm-2.control-label(for="password2") Confirm Password
+            div.col-sm-10
+                input.form-control#password2(type="password2" required name='password2' placeholder="Password")
+        div.form-group
+            div.col-sm-offset-2.col-sm-10
+                button.btn.btn-default(type="submit")  注册

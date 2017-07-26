@@ -28,7 +28,7 @@ module.exports = function(customer) {
       orderNumber: order.orderNumber,
       date: order.date,
       status: order.status,
-      url: `/order/${order.orderNumber}`,
+      url: `/order/${order.orderNumber}`
     };
   });
   const minusCustomer = omit(customer, 'saleNotes');
@@ -42,10 +42,10 @@ module.exports = function(customer) {
           ', ' +
           minusCustomer.state +
           ' ' +
-          minusCustomer.zip,
+          minusCustomer.zip
       ],
-      '<br>',
+      '<br>'
     ),
-    orders: orders,
+    orders: orders
   });
 };

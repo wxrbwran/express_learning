@@ -49,7 +49,7 @@ button {
 }
 
 .tooltip {
-  display: inline-b lock;
+  display: inline-block;
   font-size: 14px;
   font-weight: bold;
   color: #FF4A60;
